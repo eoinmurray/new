@@ -1,6 +1,7 @@
 import LIFNeuron from "./lif-neuron";
 
-interface NetworkState {
+export interface NetworkState {
+  iteration: number;
   input: number[];
   hiddenLayer: {
     voltage: number;
@@ -17,6 +18,7 @@ interface NetworkState {
   target: number;
   prediction: number;
   loss: number;
+  accuracy: number;
 }
 
 export class TinySNN {
@@ -53,6 +55,7 @@ export class TinySNN {
     
     // Initialize network state
     this.networkState = {
+      iteration: 0,
       input: [0, 0],
       hiddenLayer: Array(this.hiddenSize).fill(0).map(() => ({
         voltage: 0,
@@ -67,7 +70,9 @@ export class TinySNN {
       weights_input_to_hidden: this.weights_input_to_hidden,
       weights_hidden_to_output: this.weights_hidden_to_output,
       target: 0,
-      prediction: 0
+      prediction: 0,
+      loss: 0,
+      accuracy: 0,
     };
   }
 
@@ -108,7 +113,7 @@ export class TinySNN {
     return outputSpikes >= this.timesteps * 0.2 ? 1 : 0;
   }
 
-  train(input1: number, input2: number, target: number) {
+  train(input1: number, input2: number, target: number, iteration: number, total: number = 0, correct: number = 0) {
     const prediction = this.forward(input1, input2);
     const error = target - prediction;
 
@@ -128,6 +133,7 @@ export class TinySNN {
       }
     }
     
+    this.networkState.iteration = iteration;
     this.networkState.input = [input1, input2];
     this.networkState.target = target;
     this.networkState.prediction = prediction;
@@ -147,6 +153,7 @@ export class TinySNN {
     };
 
     this.networkState.loss = (target - prediction)**2;
+    this.networkState.accuracy = total === 0 ? 0 : correct / total;
 
     return { networkState: this.networkState };
   }

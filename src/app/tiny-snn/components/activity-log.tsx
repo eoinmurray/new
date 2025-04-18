@@ -1,5 +1,6 @@
 "use client"
 import React from 'react';
+import { NetworkState } from './tiny-snn';
 
 export interface LogEntry {
   iteration: number;
@@ -16,75 +17,36 @@ interface ActivityLogProps {
   maxEntries?: number;
 }
 
-const ActivityLog: React.FC<ActivityLogProps> = ({ 
-  entries, 
-  maxEntries = 10 
-}) => {
-  const recentEntries = entries.slice(-maxEntries).reverse();
-
+export default function ActivityLog ({ data, width, height }: {
+  data: NetworkState[],
+  width?: number;
+  height?: number;
+}) {
   return (
-    <table className="text-xs text-left text-gray-700 table-auto">
-      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr>
-          <th scope="col" className="px-2 py-1 font-semibold">Iter.</th>
-          <th scope="col" className="px-2 py-1 font-semibold">Input</th>
-          <th scope="col" className="px-2 py-1 font-semibold">Target</th>
-          <th scope="col" className="px-2 py-1 font-semibold">Prediction</th>
-          {/* <th scope="col" className="px-2 py-1 font-semibold">Loss</th> */}
-          {/* <th scope="col" className="px-2 py-1 font-semibold">Accuracy</th> */}
-          {/* <th scope="col" className="px-2 py-1 font-semibold">Time</th> */}
+    <table className={`w-[${width}px] h-[${height}px]`}>
+      <thead>
+        <tr className="bg-[#EEEEEE] border-b border-border">
+          <th className="px-4 py-2 text-left text-sm font-medium text-[#333333]">Iter.</th>
+          <th className="px-4 py-2 text-left text-sm font-medium text-[#333333]">Input</th>
+          <th className="px-4 py-2 text-left text-sm font-medium text-[#333333]">Target</th>
+          <th className="px-4 py-2 text-left text-sm font-medium text-[#333333]">Prediction</th>
         </tr>
       </thead>
       <tbody>
-        {recentEntries.length === 0 ? (
-          <tr>
-            <td colSpan={7} className="px-2 py-2 text-center text-gray-500">
-              No activity data yet. Start the simulation to see results.
+        {data.map((entry, index) => (
+          <tr 
+            key={`tableentry-${index}`}
+            className={index % 2 === 0 ? "bg-[#FAFAFA]" : "bg-[#F5F5F5]"}
+          >
+            <td className="px-4 py-2 text-left font-mono text-sm text-[#555555]">{entry.iteration}</td>
+            <td className="px-4 py-2 text-left font-mono text-sm text-[#555555]">[{entry.input[0]}, {entry.input[1]}]</td>
+            <td className="px-4 py-2 text-left font-mono text-sm text-[#555555]">{entry.target}</td>
+            <td className="px-4 py-2 text-left font-mono text-sm text-[#555555]">
+              {entry.prediction}
             </td>
           </tr>
-        ) : (
-          recentEntries.map((entry) => (
-            <tr 
-              key={entry.iteration} 
-              className={`border-b ${
-                entry.prediction === entry.target 
-                  ? "bg-green-50 hover:bg-green-100" 
-                  : "bg-red-50 hover:bg-red-100"
-              } transition-colors`}
-            >
-            <td className="px-2 py-1 text-center font-mono">{entry.iteration}</td>
-              <td className="px-2 py-1 text-center font-mono">[{entry.input[0]}, {entry.input[1]}]</td>
-              <td className="px-2 py-1 text-center font-mono">{entry.target}</td>
-              <td className="px-2 py-1 text-center font-mono">
-                <span className={`px-1 py-0.5 rounded-full ${
-                  entry.prediction === entry.target
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}>
-                  {entry.prediction}
-                </span>
-              </td>
-              {/* <td className="px-2 py-1 text-center font-mono">{entry.loss.toFixed(4)}</td> */}
-              {/* <td className="px-2 py-1 text-center font-mono">
-                <div className="flex items-center">
-                  <div className="w-12 bg-gray-200 rounded-full h-1 mr-1">
-                    <div
-                      className="bg-indigo-600 h-1 rounded-full"
-                      style={{ width: `${Math.min(100, entry.accuracy * 100)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs">{(entry.accuracy * 100).toFixed(1)}%</span>
-                </div>
-              </td> */}
-              {/* <td className="px-2 py-1 text-center text-gray-500 text-xs">
-                {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-              </td> */}
-            </tr>
-          ))
-        )}
+        ))}
       </tbody>
     </table>
   );
 };
-
-export default ActivityLog;

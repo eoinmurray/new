@@ -1,55 +1,55 @@
 import React from "react";
 import * as Plot from "@observablehq/plot";
-import { NetworkState } from "./network-visualization";
 
-export default function PlotAccuracyAndLoss ({ networkStateHistory }: {
-  networkStateHistory: NetworkState[]
+export default function PlotAccuracyAndLoss ({ data, width = 700, height = 500 }: {
+  data: {
+    iteration: number,
+    accuracy: number,
+    loss: number
+  }[],
+  width?: number;
+  height?: number;
 }) {
-  // const plotRef = React.useRef<HTMLDivElement>(null);
+  const plotRef = React.useRef<HTMLDivElement>(null);
 
-  // const updatePlot = React.useCallback(() => {
-  //   if (plotRef.current) {
-  //     const plot = Plot.plot({
-  //       // width: 500,
-  //       height: 200,
-  //       marks: [
-  //         Plot.line(networkStateHistory, { x: "iteration", y: "accuracy", stroke: "#4F46E5" }),
-  //         Plot.line(networkStateHistory, { x: "iteration", y: "loss", stroke: "#EF4444" }),
-  //       ],
-  //       x: { 
-  //         label: "Iteration",
-  //         tickFormat: (d) => d.toString()
-  //       },
-  //       y: { 
-  //         label: "Value",
-  //         grid: true 
-  //       },
-  //       style: {
-  //         fontSize: 12,
-  //         background: "transparent"
-  //       },
-  //       color: { 
-  //         legend: true,
-  //         domain: ["accuracy", "loss"],
-  //         range: ["#4F46E5", "#EF4444"] 
-  //       },
-  //     });
+  React.useEffect(() => {
+    if (plotRef.current) {
+      const plot = Plot.plot({
+        marks: [
+          Plot.line(data, { x: "iteration", y: "accuracy", stroke: '#555555', strokeWidth: 2 }),
+          Plot.line(data, { x: "iteration", y: "loss", stroke: '#999999', strokeWidth: 2, strokeDasharray: "4,2" }),
+        ],
+        x: { 
+          label: "Iteration",
+          tickFormat: (d) => d.toString(),
+          labelOffset: 8,
+        },
+        y: { 
+          domain: [0, 1],
+          labelOffset: 8,
+        },
+        style: {
 
-  //     plotRef.current.innerHTML = "";
-  //     plotRef.current.appendChild(plot);
-  //   }
-  // }, [networkStateHistory]);
+          color: "#333333",
+          fontFamily: "var(--font-mono)",
+        },
+        grid: true,
+        marginBottom: 40,
+        marginLeft: 40,
+        marginRight: 20,
+        marginTop: 20,
+        width,
+        height,
+      });
 
-  // React.useEffect(() => {
-  //   updatePlot();
-  // }, [networkStateHistory, updatePlot]);
+      plotRef.current.innerHTML = "";
+      plotRef.current.appendChild(plot);
+    }
+  }, [data]);
 
   return (
-    // <div 
-    //   ref={plotRef}
-    // />
-    <pre>
-      {JSON.stringify(networkStateHistory, null, 2)}
-    </pre>
+    <div 
+      ref={plotRef}
+    />
   );
 };
