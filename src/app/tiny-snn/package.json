@@ -1,0 +1,22 @@
+{
+  "name": "snn-typescript",
+  "version": "0.1.0",
+  "description": "Spiking Neural Network models in TypeScript",
+  "main": "neuron.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run neuron.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "dependencies": {
+    "@observablehq/plot": "^0.6.13",
+    "d3": "^7.9.0",
+    "pngjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "bun-types": "latest",
+    "typescript": "^5.3.3"
+  }
+}
