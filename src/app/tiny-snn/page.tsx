@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
-import SimulationControls from './components/simulation-controls';
+import SimulationControls from '@/components/simulation-controls';
 import { TinySNN, NetworkState } from './components/tiny-snn';
 import PlotAccuracyAndLoss from './components/plot-accuracy-and-loss';
 import NetworkVisualization from './components/network-visualization';
@@ -16,8 +16,6 @@ export default function SpikingNeuralNetworkPage() {
     isPaused: false,
   });
 
-
-  // Define your inputs array once
   const inputs = [
     {
       type: "slider" as const,
@@ -78,9 +76,9 @@ export default function SpikingNeuralNetworkPage() {
 
   const [networkStateHistory, setNetworkStateHistory] = useState<NetworkState[]>([network.networkState]);
 
-  useEffect(() => {
-    setNetworkStateHistory([]);
-  }, [simulationParameters])
+  // useEffect(() => {
+  //   setNetworkStateHistory([]);
+  // }, [simulationParameters])
 
   useEffect(() => {
     let correct = 0;
@@ -141,8 +139,8 @@ export default function SpikingNeuralNetworkPage() {
         <div className="md:col-span-1">
           <SimulationControls
             inputs={inputs}
-            onChange={(vals) => {
-              setSimulationParameters(vals)
+            onChange={(values) => {
+              setSimulationParameters(values)
             }}
           />
         </div>
