@@ -2,25 +2,20 @@
 import { useEffect, useRef, useState } from "react";
 import * as Plot from '@observablehq/plot';
 
-export default function Histogram({ 
-  counts, 
-  bins,
+export default function StackedLinePlot({ 
+  data1, 
+  data2,
   title,
   width = 400,
   height = 200,
 }: { 
-  counts: number[]; 
-  bins: number[];
+  data1: number[]; 
+  data2: number[]; 
   title: string;
   width?: number;
   height?: number; 
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const data = bins.map((bin, index) => ({
-    bin,
-    count: counts[index] || 0,
-  }));
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -29,14 +24,15 @@ export default function Histogram({
     const chart = Plot.plot({
       title: title,
       marks: [
-        Plot.lineY(data, { x: d => d.bin, y: d => d.count}),
+        Plot.lineY(data1),
+        Plot.lineY(data2),
       ],
       width: width,
       height: height,
     });
     
     containerRef.current.append(chart);
-  }, [counts, bins, title, width, height]);
+  }, [data1, data2, title, width, height]);
 
   return (
     <div ref={containerRef} />

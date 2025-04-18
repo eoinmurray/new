@@ -1,7 +1,6 @@
 import numpy as np
-from src.config import surrogate_grad_steepness
 
-def lif_step(input_current, membrane_potential, membrane_decay):
+def lif_step(input_current, membrane_potential, membrane_decay, surrogate_grad_steepness):
     membrane_potential = membrane_decay * membrane_potential + input_current
     spikes = membrane_potential > 1.0    
     delta = membrane_potential - 1.0
