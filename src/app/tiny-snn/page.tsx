@@ -16,14 +16,6 @@ type SimulationParams = {
 };
 
 export default function SpikingNeuralNetworkPage() {
-  const [simulationParameters, setSimulationParameters] = useState<SimulationParams>({
-    hiddenSize: 4,
-    learningRate: 0.05,
-    timesteps: 100,
-    frameRate: 10,
-    isPaused: false,
-  });
-
   const inputs = [
     {
       type: "slider" as const,
@@ -31,7 +23,7 @@ export default function SpikingNeuralNetworkPage() {
       label: "Hidden layer size",
       defaultValue: 8,
       min: 2,
-      max: 20,
+      max: 800,
       step: 1,
     },
     {
@@ -69,6 +61,19 @@ export default function SpikingNeuralNetworkPage() {
     },
   ]
 
+  const defaultValues = inputs.reduce((acc, input) => {
+    acc[input.id] = input.defaultValue;
+    return acc;
+  }, {} as Record<string, any>);
+
+  const [simulationParameters, setSimulationParameters] = useState<SimulationParams>({
+    hiddenSize: defaultValues.hiddenSize,
+    learningRate: defaultValues.learningRate,
+    timesteps: defaultValues.timesteps,
+    frameRate: defaultValues.frameRate,
+    isPaused: defaultValues.isPaused,
+  });
+
   const XOR_DATA = [
     { inputs: [0, 0], target: 0 },
     { inputs: [0, 1], target: 1 },
@@ -97,8 +102,8 @@ export default function SpikingNeuralNetworkPage() {
         animationFrameId = requestAnimationFrame(runNetwork);
         return;
       }
-      
       const sample = XOR_DATA[Math.floor(Math.random() * XOR_DATA.length)];
+
       const { networkState } = network.train(sample.inputs[0], sample.inputs[1], sample.target, iteration, total, correct);
 
       iteration += 1;
@@ -152,7 +157,7 @@ export default function SpikingNeuralNetworkPage() {
                 width={450}
                 height={300}
               />}
-            </div>          
+            </div>
             <div className="border rounded p-2">
               <h2 className="text-lg font-medium text-[#333333] mb-2">Spiking Activity</h2>
               <RealtimeSpikingPlot 

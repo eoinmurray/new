@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from src.evaluate_model import evaluate_model
 from src.lif_step import lif_step
 from src.poisson_encode import poisson_encode_speed
@@ -8,7 +9,7 @@ from src.save_data import save_data
 from src.process_encoding_data import process_encoding_data
 
 def main():
-    num_time_steps = 100
+    num_time_steps = 300
     num_input_neurons = 784
     num_hidden_neurons = 100
     num_output_neurons = 10
@@ -17,12 +18,17 @@ def main():
     batch_size = 128
     num_epochs = 5
     surrogate_grad_steepness = 5.0
+    dataset = 'MNIST' # 'MNIST' or 'FashionMNIST'
 
-    FAST_MODE = False
-    train_loader, test_loader = load_mnist_data(batch_size)
+    FAST_MODE = True
+    train_loader, test_loader = load_mnist_data(batch_size, dataset=dataset)
 
-    weights_input_to_hidden = np.random.normal(0, 0.1, size=(num_input_neurons, num_hidden_neurons))
-    weights_hidden_to_output = np.random.normal(0, 0.1, size=(num_hidden_neurons, num_output_neurons))
+    weights_input_to_hidden = np.random.uniform(
+        -np.sqrt(1 / num_input_neurons), np.sqrt(1 / num_input_neurons), size=(num_input_neurons, num_hidden_neurons)
+    )
+    weights_hidden_to_output = np.random.uniform(
+        -np.sqrt(1 / num_hidden_neurons), np.sqrt(1 / num_hidden_neurons), size=(num_hidden_neurons, num_output_neurons)
+    )
 
     weights_input_to_hidden_start = weights_input_to_hidden.copy()
     weights_hidden_to_output_start = weights_hidden_to_output.copy()
@@ -68,10 +74,13 @@ def main():
 
             for t in range(num_time_steps):
                 current_input_hidden = encoded_spikes[:, t, :] @ weights_input_to_hidden
+
                 spikes_hidden, membrane_potential_hidden, grad_hidden = lif_step(current_input_hidden, membrane_potential_hidden, membrane_decay, surrogate_grad_steepness)
+
                 spike_history_hidden.append(spikes_hidden)
                 input_current_history_hidden.append(current_input_hidden)
                 current_input_output = spikes_hidden @ weights_hidden_to_output
+
                 spikes_output, membrane_potential_output, grad_output = lif_step(current_input_output, membrane_potential_output, membrane_decay, surrogate_grad_steepness)
                 output_spike_accumulator += spikes_output
 
@@ -88,7 +97,7 @@ def main():
                 spikes_hidden = spike_history_hidden[t]
                 input_current_hidden = input_current_history_hidden[t]
                 current_input_output = spikes_hidden @ weights_hidden_to_output
-                
+
                 _, _, grad_output = lif_step(current_input_output, np.zeros_like(membrane_potential_output), membrane_decay, surrogate_grad_steepness)
                 grad_output_current = grad_logits * grad_output
                 grad_weights_output += spikes_hidden.T @ grad_output_current
@@ -97,7 +106,7 @@ def main():
                 _, _, grad_hidden = lif_step(input_current_hidden, np.zeros_like(membrane_potential_hidden), membrane_decay, surrogate_grad_steepness)
                 grad_input_hidden = grad_spikes_hidden * grad_hidden
                 grad_weights_input += encoded_spikes[:, t, :].T @ grad_input_hidden
-            
+
             if batch_iteration % 50 == 0:
                 grad_norms['input'].append(np.linalg.norm(grad_weights_input))
                 grad_norms['output'].append(np.linalg.norm(grad_weights_output))

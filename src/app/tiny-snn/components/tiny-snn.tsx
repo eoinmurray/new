@@ -127,12 +127,9 @@ export class TinySNN {
       if (this.hiddenLayer[i].trace > 0.1 && this.output.trace > 0.1) {
         this.weights_input_to_hidden[i][0] += this.learningRate * error * input1 * this.hiddenLayer[i].trace * this.output.trace;
         this.weights_input_to_hidden[i][1] += this.learningRate * error * input2 * this.hiddenLayer[i].trace * this.output.trace;
-        if (this.weights_input_to_hidden[i][2] !== undefined) {
-          this.weights_input_to_hidden[i][2] += this.learningRate * error * this.hiddenLayer[i].trace * this.output.trace;
-        }
       }
     }
-    
+
     this.networkState.iteration = iteration;
     this.networkState.input = [input1, input2];
     this.networkState.target = target;
@@ -145,7 +142,7 @@ export class TinySNN {
       spike: neuron.spike,
       trace: neuron.trace
     }));
-    
+
     this.networkState.output = {
       voltage: this.output.voltage,
       spike: this.output.spike,

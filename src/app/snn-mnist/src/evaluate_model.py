@@ -32,7 +32,7 @@ def evaluate_model(data_loader, weights_input_to_hidden, weights_hidden_to_outpu
         predictions = np.argmax(output_spike_accumulator, axis=1)
         correct_predictions += (predictions == labels.numpy()).sum()
         total_samples += len(labels)
-        
+
         all_predictions.extend(predictions)
         all_labels.extend(labels.numpy())
         all_spike_rates.append(output_spike_accumulator / num_time_steps)
