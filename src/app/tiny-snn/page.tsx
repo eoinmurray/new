@@ -131,7 +131,7 @@ export default function SpikingNeuralNetworkPage() {
   })).slice(-100);
 
   return (
-    <div className="">
+    <div className="p-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
           <h1 className="text-2xl font-medium text-[#333333]">Spiking Neural Network Simulation</h1>

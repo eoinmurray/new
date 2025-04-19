@@ -275,7 +275,7 @@ export default function SpikingNeuralNetworkPage() {
   }, []);
 
   return (
-    <div className="">
+    <div className="p-4">
       <div className="mb-6">
         <h1 className="text-2xl font-medium text-[#333333]">Neuron Playground</h1>
       </div>
