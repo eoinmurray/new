@@ -32,11 +32,11 @@ const NeuronCircle: FC<NeuronCircleProps> = memo(({ x, y, active, label }) => (
       stroke={COLORS.stroke}
       strokeWidth={1.5}
     />
-    {label && (
+    {/* {label && (
       <text x={35} y={23} fontSize={12} textAnchor="middle" fill={COLORS.text}>
         {label}
       </text>
-    )}
+    )} */}
   </g>
 ));
 

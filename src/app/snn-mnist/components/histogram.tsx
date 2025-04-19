@@ -8,12 +8,16 @@ export default function Histogram({
   title,
   width = 400,
   height = 200,
+  xLabel = "Value",
+  yLabel = "Frequency"
 }: { 
   counts: number[]; 
   bins: number[];
   title: string;
   width?: number;
   height?: number; 
+  xLabel?: string;
+  yLabel?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +37,14 @@ export default function Histogram({
       ],
       width: width,
       height: height,
+      x: {
+        label: xLabel,
+        ticks: 10,
+      },
+      y: {
+        label: yLabel,
+        domain: [0, Math.max(...counts) * 1.1],
+      }
     });
     
     containerRef.current.append(chart);

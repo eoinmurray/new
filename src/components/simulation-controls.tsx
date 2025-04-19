@@ -85,9 +85,11 @@ export default function SimulationControls({ inputs, onChange }: SimulationContr
               <Label htmlFor={input.id} className="flex justify-between text-sm">
                 <span className="text-[#555555]">{input.label}</span>
                 <span className="px-1 py-0.5 rounded bg-[#EEEEEE] font-mono text-xs text-[#555555]">
-                  {(values[input.id] as number).toFixed(
-                    (input as SliderConfig).step && (input as SliderConfig).step < 1 ? 2 : 0
-                  )}
+                  {(() => {
+                    const val = values[input.id] as number;
+                    const step = (input as SliderConfig).step ?? 1;
+                    return val.toFixed(step < 1 ? 2 : 0);
+                  })()}
                 </span>
               </Label>
               <Slider

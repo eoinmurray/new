@@ -7,12 +7,20 @@ export function simulate({
   model,
   current,
   dt
+}: {
+  model: string;
+  current: number[] | number;
+  dt: number;
 }) {
+  // Handle both array and single value
+  const currentArray = Array.isArray(current) ? current : Array(1000).fill(current);
+  
   if (model === "HH") {
-    return simulateHH(current, dt)
+    return simulateHH(currentArray, dt)
   } else if (model === "LIF") {
-    return simulateLIF(current, dt, 10.0, 1.0).V
+    return simulateLIF(currentArray, dt, 10.0, 1.0).V
   } else {
-    return simulateIzhikevich(current, dt).V
+    // Check Izhikevich implementation for what it expects
+    return simulateIzhikevich(currentArray, dt).V
   }
 }

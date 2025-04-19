@@ -7,11 +7,15 @@ export default function LinePlot({
   title,
   width = 400,
   height = 200,
+  xLabel,
+  yLabel
 }: { 
   data: number[]; 
   title: string;
   width?: number;
   height?: number; 
+  xLabel: string;
+  yLabel: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +30,12 @@ export default function LinePlot({
       ],
       width: width,
       height: height,
+      x: {
+        label: xLabel
+      },
+      y: {
+        label: yLabel
+      }
     });
     
     containerRef.current.append(chart);

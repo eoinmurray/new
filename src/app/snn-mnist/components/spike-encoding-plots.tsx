@@ -29,7 +29,7 @@ export default function SpikeEncodingPlots({
     }));
 
     const chart1 = Plot.plot({
-      title: title,
+      title,
       marks: [
         Plot.dot(zippedData, {
           x: "spike_time",
@@ -50,7 +50,7 @@ export default function SpikeEncodingPlots({
     );
 
     const chart2 = Plot.plot({
-      title: "Spike Encoding",
+      title: "Original Image",
       marks: [
         Plot.cell(tidyImageData, {
           x: "x",
@@ -73,5 +73,4 @@ export default function SpikeEncodingPlots({
       <div ref={chart1Ref} />
     </div>
   )
-
 }

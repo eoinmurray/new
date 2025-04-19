@@ -1,14 +1,22 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import SimulationControls from '@/components/simulation-controls';
 import { TinySNN, NetworkState } from './components/tiny-snn';
 import PlotAccuracyAndLoss from './components/plot-accuracy-and-loss';
 import NetworkVisualization from './components/network-visualization';
 import RealtimeSpikingPlot from './components/realtime-spiking-plot';
-import ActivityLog, { LogEntry } from './components/activity-log';
+import WeightsHistogram from './components/weights-histogram';
+
+type SimulationParams = {
+  hiddenSize: number;
+  learningRate: number;
+  timesteps: number;
+  frameRate: number;
+  isPaused: boolean;
+};
 
 export default function SpikingNeuralNetworkPage() {
-  const [simulationParameters, setSimulationParameters] = useState({
+  const [simulationParameters, setSimulationParameters] = useState<SimulationParams>({
     hiddenSize: 4,
     learningRate: 0.05,
     timesteps: 100,
@@ -76,10 +84,6 @@ export default function SpikingNeuralNetworkPage() {
 
   const [networkStateHistory, setNetworkStateHistory] = useState<NetworkState[]>([network.networkState]);
 
-  // useEffect(() => {
-  //   setNetworkStateHistory([]);
-  // }, [simulationParameters])
-
   useEffect(() => {
     let correct = 0;
     let total = 0;
@@ -126,59 +130,57 @@ export default function SpikingNeuralNetworkPage() {
     loss: state.loss,
   })).slice(-100);
 
-  const activityLogData = networkStateHistory.slice(-10)
-
   return (
-    <div className="max-w-[1400px] mx-auto">
-      <div className="mb-6 pt-6">
-        <h1 className="text-2xl font-medium text-[#333333]">Spiking Neural Network Simulation</h1>
-        <p className="text-[#666666] mt-1">Interactive visualization of a simple spiking neural network learning the XOR function</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pb-8">
+    <div className="">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-1">
+          <h1 className="text-2xl font-medium text-[#333333]">Spiking Neural Network Simulation</h1>
+          <p className="text-sm text-[#666666] mb-4">This is a simple spiking neural network simulation that learns the XOR function.</p>
           <SimulationControls
             inputs={inputs}
             onChange={(values) => {
-              setSimulationParameters(values)
+              setSimulationParameters(values as unknown as SimulationParams)
             }}
           />
         </div>
-        <div className="md:col-span-3 space-y-6">
-          <div className="w-[700px] h-[500px]">
-            <h2 className="text-lg font-medium text-[#333333] mb-2">Network Structure</h2>
-            {networkStateHistory.length > 0 && <NetworkVisualization 
-              data={networkStateHistory[networkStateHistory.length - 1]} 
-              width={700}
-              height={500}
-            />}
+        <div className="md:col-span-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border rounded p-2">
+              <h2 className="text-lg font-medium text-[#333333]">Network Structure</h2>
+              {networkStateHistory.length > 0 && <NetworkVisualization 
+                data={networkStateHistory[networkStateHistory.length - 1]} 
+                width={450}
+                height={300}
+              />}
+            </div>          
+            <div className="border rounded p-2">
+              <h2 className="text-lg font-medium text-[#333333] mb-2">Spiking Activity</h2>
+              <RealtimeSpikingPlot 
+                data={networkStateHistory}
+                width={450}
+                height={300}
+              /> 
+            </div>
+            <div className="border rounded p-2">
+              <h2 className="text-lg font-medium text-[#333333] mb-2">Accuracy and Loss</h2>
+              <PlotAccuracyAndLoss 
+                data={accuracyAndLossData} 
+                width={450}
+                height={300}
+              />
+            </div>
+
+            <div className="border rounded p-2">
+              <h2 className="text-lg font-medium text-[#333333] mb-2">Weights</h2>
+              <WeightsHistogram
+                data1={networkStateHistory[networkStateHistory.length - 1].weights_input_to_hidden.flat()}
+                data2={networkStateHistory[networkStateHistory.length - 1].weights_hidden_to_output.flat()}
+                width={450}
+                height={300}
+              />
+            </div>
           </div>
           
-          <div>
-            <h2 className="text-lg font-medium text-[#333333] mb-2">Spiking Activity</h2>
-            <RealtimeSpikingPlot 
-              data={networkStateHistory}
-              width={700}
-              height={500}
-            /> 
-          </div>
-          <div>
-            <h2 className="text-lg font-medium text-[#333333] mb-2">Network Performance</h2>
-            <PlotAccuracyAndLoss 
-              data={accuracyAndLossData} 
-              width={700}
-              height={500}
-            />
-          </div>
-          
-          <div>
-            <h2 className="text-lg font-medium text-[#333333] mb-2">Recent Activity</h2>
-            <ActivityLog 
-              data={activityLogData} 
-              width={700}
-              height={500}
-            />
-          </div>
         </div>
       </div>
     </div>
