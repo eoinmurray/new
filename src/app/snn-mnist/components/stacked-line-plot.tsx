@@ -27,9 +27,6 @@ export default function StackedLinePlot({
         Plot.lineY(data1),
         Plot.lineY(data2),
       ],
-      y: {
-        domain: [0, 5],
-      },
       width: width,
       height: height,
       x: {
